@@ -20,18 +20,6 @@ services:
       - DATABASE_URL=postgres://pudge:swaga1337@db:5432/main?sslmode=disable
     depends_on:
       - db
-  
-  tester:
-    build:
-      context: .
-      dockerfile: ./tester/Dockerfile
-    profiles:
-      - "tests"
-    depends_on:
-      - migrator
-    environment:
-      - DATABASE_URL=postgres://pudge:swaga1337@db:5432/main?sslmode=disable
-    
     
   reviews-app:
     build: .

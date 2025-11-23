@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func RegisterUserTest(t *testing.T) {
+func TestRegisterUser(t *testing.T) {
 	handler := InitTestHandler(t)
 
 	req := httptest.NewRequest(http.MethodGet, "/users/new-dummy", nil)
@@ -19,7 +19,7 @@ func RegisterUserTest(t *testing.T) {
 	expected := map[string]interface{}{
 		"status": "ok",
 		"user": map[string]interface{}{
-			"id":        0,
+			"id":        float64(0),
 			"name":      "Mike",
 			"is_active": true,
 		},

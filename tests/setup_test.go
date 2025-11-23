@@ -12,12 +12,14 @@ import (
 	"github.com/darrkeer/avito-tech-test-task/handlers"
 	"github.com/darrkeer/avito-tech-test-task/repository"
 	"github.com/jmoiron/sqlx"
+
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
 func InitTestDB(t *testing.T) *sql.DB {
 	t.Helper()
 
-	db, err := sqlx.Connect("postgres", os.Getenv("DATABASE_URL"))
+	db, err := sqlx.Connect("pgx", os.Getenv("DATABASE_URL"))
 	if err != nil {
 		t.Fatalf("failed to connect to database: %v", err)
 	}
