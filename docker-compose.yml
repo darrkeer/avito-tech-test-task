@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_PASSWORD: swaga1337
+      POSTGRES_USER: pudge
+      POSTGRES_DB: main
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  migrator:
+    build: 
+      context: .
+      dockerfile: ./migrator/Dockerfile
+    volumes:
+      - ./migrations:/migrations
+    environment:
+      - DATABASE_URL=postgres://pudge:swaga1337@db:5432/main?sslmode=disable
+    depends_on:
+      - db
+  
+  tester:
+    build:
+      context: .
+      dockerfile: ./tester/Dockerfile
+    profiles:
+      - "tests"
+    depends_on:
+      - migrator
+    environment:
+      - DATABASE_URL=postgres://pudge:swaga1337@db:5432/main?sslmode=disable
+    
+    
+  reviews-app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - migrator
+    environment:
+      - DATABASE_URL=postgres://pudge:swaga1337@db:5432/main?sslmode=disable
+
+volumes:
+  db_data:
