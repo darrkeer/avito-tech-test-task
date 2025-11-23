@@ -16,7 +16,7 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
-func InitTestDB(t *testing.T) *sql.DB {
+func initTestDB(t *testing.T) *sql.DB {
 	t.Helper()
 
 	db, err := sqlx.Connect("pgx", os.Getenv("DATABASE_URL"))
@@ -37,16 +37,16 @@ func InitTestDB(t *testing.T) *sql.DB {
 	return db.DB
 }
 
-func InitTestHandler(t *testing.T) *handlers.Handler {
+func initTestHandler(t *testing.T) *handlers.Handler {
 	t.Helper()
 
-	repo := repository.New(InitTestDB(t))
+	repo := repository.New(initTestDB(t))
 	handler := handlers.New(repo)
 
 	return handler
 }
 
-func AssertStatusCode(t *testing.T, response *http.Response, expected int) {
+func assertStatusCode(t *testing.T, response *http.Response, expected int) {
 	t.Helper()
 
 	if response.StatusCode != expected {
@@ -54,7 +54,7 @@ func AssertStatusCode(t *testing.T, response *http.Response, expected int) {
 	}
 }
 
-func AssertJSONBody(t *testing.T, response *http.Response, expected map[string]interface{}) {
+func assertJSONBody(t *testing.T, response *http.Response, expected map[string]interface{}) {
 	t.Helper()
 
 	bodyBytes, err := io.ReadAll(response.Body)
@@ -71,4 +71,13 @@ func AssertJSONBody(t *testing.T, response *http.Response, expected map[string]i
 	if !reflect.DeepEqual(got, expected) {
 		t.Errorf("JSON mismatch.\nExpected: %+v\nGot: %+v", expected, got)
 	}
+}
+
+func makeJSONFrom(content string) (map[string]interface{}, error) {
+	var data map[string]interface{}
+	err := json.Unmarshal([]byte(content), &data)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
 }
